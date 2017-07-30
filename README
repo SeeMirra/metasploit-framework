@@ -1,0 +1,32 @@
+Many of us have been living in the safe confines of our datacenters for far too long. Datacenters usually have strict configuration management, intrusion detection systems, and processes for making changes that impact network security such as opening access through the firewall. As DevOps engineers, this crunchy outer shell tends to make us feel safe and could detach us from owning our own security. Guess what, in the Cloud there is no such crunchy shell and there is little configuration management when it comes to restricting/managing whom make changes, as separation of duties has certain challenges in the Cloud.
+
+The cloud is growing rapidly and there are a lot of folks jumping on the band wagon whom may not have a good grasp of the attack surface. The combination of this new attack surface and lack of understanding results in insecure apps making it to production, which is low hanging fruit for attackers.
+
+Identity and Access Management
+
+Identity and Access Management (IAM) in the Cloud is part of the new attack surface and is easy to get it wrong. IAM is used to control who has access to what and policies codify this access. Access policies can be applied to users, groups, and roles and have an Effect: allow or deny, Action: specific API actions, Resources: the things we are controlling access to, and Conditions: additional controls for restricting access.
+
+The way we see it, there are three types of policies. The Good, a minimum privileges policy that specifies resources and makes use of conditions. The Bad, where wild cards are used to give wide access to every action available on a service and where we begin to commingle IAM access with DevOps access, and finally, The Ugly. This is the infamous star-dot-star (*.*) policy which allows any action on any resource without making use of conditions. So, how do you determine if your policies implement minimum privileges or are otherwise not bad or ugly? The approach we have taken to determine if we if we have a bad or ugly policy is red teaming, i.e., we actively attempt to take over accounts where we see weaknesses. This allows us to concentrate on the most atrocious misuses of IAM so that DevOps engineers concentrate on fixing the most dangerous configurations.
+
+The Cumulus Toolkit
+
+We used to do much of our red teaming tasks by hand and have noticed a there is a lack of tools for testing the security of Cloud deployments, so we have taken the time to automate our attacks. We are in the process of developing the cumulus toolkit, a cloud exploitation toolkit which is based on Metasploit, an open source exploitation framework.
+
+At RSA we showcased and demonstrated a few Cumulus modules. The first is the CIAMU (Create IAM User) module, a post exploitation module used to create an IAM user with admin privileges. The second module is the Launch Instances Modules. Often, we compromise a host or access keys that have EC2 privileges and so they may allow us to launch an instance with elevated privileges. We can then use this new access to escalate privileges further. Lastly, we have the IAM account lockout module. This is the most evil module of them all. It can be used to lock all other users out of an account. A word of caution, never use this module in a production environment as it will remove all users’ passwords and disable their access keys.
+
+For more information about Cumulus please follow development here: https://github.com/devsecops/metasploit-framework/tree/cumulus
+
+Conclusion
+
+AWS does give us everything we need to secure our environments. IAM is very granular and has controls to restrict where API access keys can be used from. Issues raised here and in our presentation, are really education and awareness issues that can be addressed with proper training. A useful strategy for developing IAM policy and potentially staying safe from these attacks is to put the attacker hat on and try to think of ways bad guys can take advantage of your controls. Think about blast radius containment, read the docs especially for IAM and lastly try not to be the guinea pig; just because there is a new sexy service that everybody is talking about, it doesn’t mean that you should make use of it in your critical applications.
+
+References:
+* Presentation: https://www.rsaconference.com/events/us17/agenda/sessions/4677-DevSecOps-on-the-Offense-Automating-Amazon-Web-Services-Account-Takeover
+* Slides: https://published-prd.lanyonevents.com/published/rsaus17/sessionsFiles/4721/IDY-W10-DevSecOps-on-the-Offense-Automating-Amazon-Web-Services-Account-Takeover.pdf
+
+Works Cited
+
+[1]  D. Pauli, “Dev put AWS keys on Github. Then BAD THINGS happened,” The Register , 6 January 2015. [Online]. Available: http://www.theregister.co.uk/2015/01/06/ dev_blunder_shows_github_crawling_with_k eyslurping_bots/ . [Accessed 5 January 2017].
+[2]  S. Gooding, “Ryan Hellyer’s AWS Nightmare: Leaked Access Keys Result in a $6,000 Bill Overnight,” WP Tavern , 26 September 2014. [Online]. Available: https://wptavern.com/ryan-hellyers-aws-nightmare-leaked-access-keys-result-in-a-6000-bill-overnight . [Accessed 5 January 2017].
+[3]  M. Kotadia, “AWS urges developers to scrub GitHub of secret keys,” iTnews, 24 March 2014. [Online]. Available: http://www.itnews.com.au/news/aws-urges-developers-to-scrub-github-of-secret-keys-375785 . [Accessed 5 January 2017].
+[4]  L. Leong, G. Petri, B. Gill and M. Dorosh, “Magic Quadrant for Cloud Infrastructure as a Service, Worldwide,” Gartner, Stamford, 2016.
